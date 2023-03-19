@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<[void,void]> {
         table.integer('from_user_id').unsigned().notNullable().references('id').inTable('users');
         table.integer('to_user_id').unsigned().notNullable().references('id').inTable('users');
         table.decimal('amount', 10, 2).notNullable();
-        table.decimal('type',10,2).notNullable();
+        table.string('type',20).notNullable();
         table.timestamp('timestamp').notNullable().defaultTo(knex.fn.now());
       });
 const users =  knex.schema.createTable('users', (table) => {

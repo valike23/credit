@@ -34,7 +34,6 @@ export async function createUser(email: string, password: string): Promise<Iuser
           .where('id', fromAccountId)
           .first();
         if (fromAccount.balance < amount) {
-          trx.rollback();
           throw {msg:'Insufficient balance'};
         }
         await trx('users')
@@ -56,8 +55,7 @@ export async function createUser(email: string, password: string): Promise<Iuser
         type: 'transfer',
         amount: amount,
         });
-        // Commit the transaction
-          trx.commit();
+      
         // Return the updated accounts
         return {
           fromAccount,
@@ -82,7 +80,7 @@ export async function createUser(email: string, password: string): Promise<Iuser
           .where('id', userId)
           .first();
         if (user.balance < amount) {
-          trx.rollback();
+        
           throw {msg:'Insufficient balance'};
         }
         await trx('users')
@@ -97,12 +95,12 @@ export async function createUser(email: string, password: string): Promise<Iuser
           amount: amount,
         });
   
-        // Commit the transaction
-        trx.commit();
+      
   
         // Return the updated user object
         return await trx('users')
           .where('id', userId)
+          .select(['email','balance'])
           .first();
       });
     } catch (error) {
@@ -133,12 +131,12 @@ export async function createUser(email: string, password: string): Promise<Iuser
           amount: amount,
         });
   
-        // Commit the transaction
-        trx.commit();
+        
   
         // Return the updated user object
         return await trx('users')
           .where('id', userId)
+          .select(['email','balance'])
           .first();
       });
     } catch (error) {
