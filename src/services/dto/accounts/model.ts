@@ -9,3 +9,8 @@ export interface Ireturn{
     msg: string,
     data: any
 }
+
+export interface Itransfer{
+    accountNumber: number,
+    amount: number
+}

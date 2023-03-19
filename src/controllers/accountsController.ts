@@ -5,7 +5,7 @@ import { addUser, loginUser } from "../services/accounts.service";
 import { Ilogin } from "../services/dto/accounts/model";
 import { isLogin } from "../services/dto/accounts/rules";
 
-export async function createAccount(req: Request , res: Response){
+export async function createAccountCtrl(req: Request , res: Response){
    if(!isLogin(req.body)) return  badRequestResponse({},'email or password is missing', res);
 
  const resp = await addUser(req.body as Ilogin);
@@ -13,7 +13,7 @@ export async function createAccount(req: Request , res: Response){
 
 }
 
-export async function login(req: Request , res: Response){
+export async function loginCtrl(req: Request , res: Response){
    if(!isLogin(req.body)) return badRequestResponse({},'email or password is missing', res);
    const resp = await loginUser(req.body);
    handleResponse(resp, res);
