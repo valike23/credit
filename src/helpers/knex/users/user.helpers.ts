@@ -73,7 +73,7 @@ export async function createUser(email: string, password: string): Promise<Iuser
           .first();
         if (user.balance < amount) {
           trx.rollback();
-          throw new Error('Insufficient balance');
+          throw {msg:'Insufficient balance'};
         }
         await trx('users')
           .where('id', userId)
