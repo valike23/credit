@@ -1,5 +1,5 @@
 import { createTransactions } from "../helpers/knex/transactions/transaction.helpers";
-import { transferFunds } from "../helpers/knex/users/user.helpers";
+import { fundAccount, transferFunds, withdrawFunds } from "../helpers/knex/users/user.helpers";
 import { Ireturn, Itransfer } from "./dto/accounts/model";
 
 
@@ -14,9 +14,8 @@ export class transactionsService {
         console.log('resp', resp);
         let response: Ireturn = {status: 200, data:resp, msg: 'transfer is successful'}
         //create transaction
-       const transaction = await createTransactions({amount: transferDTO.amount, from_user_id: myId, to_user_id: transferDTO.accountNumber})
-
-      if(transaction) return response;
+       
+      if(resp) return response;
          
 
     } catch (error : any) {
@@ -27,10 +26,26 @@ export class transactionsService {
          
        
     }
-    async withdrawalFund(){
-
+    async withdrawalFund(amount: number, myId: number): Promise<Ireturn>{
+      try {
+        let resp = await withdrawFunds(myId, amount);
+        console.log('resp', resp);
+        let response: Ireturn = {status: 200, data:resp, msg: 'withdrawal is successful'}
+        return response;
+      } catch (error) {
+        console.log('error', error);
+        return {status: 503, data:error, msg: 'something went wrong'}
+      }
     }
-    async creditWallet(){
-
+    async creditWallet(amount: number, myId: number) :Promise<Ireturn>{
+        try {
+            let resp = await fundAccount(myId, amount);
+            console.log('resp', resp);
+            let response: Ireturn = {status: 200, data:resp, msg: 'credit action is successful'}
+            return response;
+          } catch (error) {
+            console.log('error', error);
+            return {status: 503, data:error, msg: 'something went wrong'}
+          }
     }
 }

@@ -34,6 +34,7 @@ export async function createUser(email: string, password: string): Promise<Iuser
           .where('id', fromAccountId)
           .first();
         if (fromAccount.balance < amount) {
+          trx.rollback();
           throw {msg:'Insufficient balance'};
         }
         await trx('users')
@@ -47,7 +48,16 @@ export async function createUser(email: string, password: string): Promise<Iuser
         await trx('users')
           .where('id', toAccountId)
           .increment('balance', amount);
-  
+
+  // Record the transaction
+      await trx('transactions').insert({
+        from_user_id: fromAccountId,
+        to_user_id: toAccountId,
+        type: 'transfer',
+        amount: amount,
+        });
+        // Commit the transaction
+          trx.commit();
         // Return the updated accounts
         return {
           fromAccount,
@@ -81,7 +91,8 @@ export async function createUser(email: string, password: string): Promise<Iuser
   
         // Record the transaction
         await trx('transactions').insert({
-          user_id: userId,
+          from_user_id: userId,
+          to_user_id: userId,
           type: 'withdrawal',
           amount: amount,
         });
@@ -100,6 +111,45 @@ export async function createUser(email: string, password: string): Promise<Iuser
       throw error;
     }
   };
+
+  export const fundAccount = async (userId: number, amount: number) => {
+    try {
+      // Start a transaction to ensure data consistency
+      return await Knex.transaction(async (trx) => {
+        // Lock the user's account row to ensure data consistency
+        await trx.raw('SELECT * FROM users WHERE id = ? FOR UPDATE', [userId]);
+  
+        // Update the user's account balance
+        
+        await trx('users')
+          .where('id', userId)
+          .increment('balance', amount);
+  
+        // Record the transaction
+        await trx('transactions').insert({
+          from_user_id: userId,
+          to_user_id: userId,
+          type: 'credit',
+          amount: amount,
+        });
+  
+        // Commit the transaction
+        trx.commit();
+  
+        // Return the updated user object
+        return await trx('users')
+          .where('id', userId)
+          .first();
+      });
+    } catch (error) {
+      console.error(error);
+      // Rollback the transaction if an error occurs
+      throw error;
+    }
+  };
+
+
+  
   
   
   

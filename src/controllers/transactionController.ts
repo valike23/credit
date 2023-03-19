@@ -16,9 +16,16 @@ export async function transferFundsCtrl(req: Request, res: Response){
 }
 
 export async function withdrawalCtrl(req: Request, res: Response){
-
+    const {amount} = req.body;
+    const user: Iuser = req["user"];
+    const resp =  await new transactionsService().withdrawalFund(amount, user.id);
+    handleResponse(resp, res);
+    
 }
 
 export async function creditCtrl(req: Request, res: Response){
-
+    const {amount}= req.body;
+    const user: Iuser = req["user"];
+    const resp =  await new transactionsService().creditWallet(amount, user.id);
+    handleResponse(resp, res);
 }
