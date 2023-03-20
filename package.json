@@ -27,7 +27,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "npm install && tsc",
     "migration": "npx knex migrate:latest --env development"
   }
 }
