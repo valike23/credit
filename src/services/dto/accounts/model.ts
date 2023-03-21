@@ -1,6 +1,13 @@
 export interface Ilogin {
     email: string,
     password: string,
+
+}
+export interface Iregister {
+    email: string,
+    password: string,
+    name: string
+    
 }
 
 
