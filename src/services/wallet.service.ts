@@ -1,5 +1,5 @@
 import { Iuser } from "../helpers/knex/users.helpher";
-import { createWallet, fundAccount, transferFundsWallet, withdrawFunds } from "../helpers/knex/wallet.helper";
+import { createWallet, fundAccount, getWallet, transferFundsWallet, withdrawFunds } from "../helpers/knex/wallet.helper";
 import { Ireturn } from "./dto/accounts/model";
 export interface Iwallet {
     id: number,
@@ -8,10 +8,15 @@ export interface Iwallet {
 }
 export class WalletService {
     private users: Iuser[] = [];
+    private user_id: number = 0;
 
 
     public createWallet(userId: number) {
+        this.user_id = userId;
         return createWallet(userId)
+    }
+    public async getWallet(userId: number){
+        return await getWallet(userId);
     }
 
     public async fundUser(userId: number, amount: number): Promise<any> {

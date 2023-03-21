@@ -11,6 +11,7 @@ export const transferFundsWallet = async (fromAccountId: number, toAccountId: nu
             const fromAccount = await trx('wallet')
                 .where('user_id', fromAccountId)
                 .first();
+                if(fromAccount == undefined) {throw {msg:'User not found'}}
             if (fromAccount.balance < amount) {
                 throw { msg: 'Insufficient balance' };
             }
@@ -22,7 +23,8 @@ export const transferFundsWallet = async (fromAccountId: number, toAccountId: nu
             const toAccount = await trx('wallet')
                 .where('user_id', toAccountId)
                 .first();
-
+                console.log('accounts', toAccount);
+            if(toAccount == undefined) {throw {msg:'User not found'}}
             await trx('wallet')
                 .where('user_id', toAccountId)
                 .increment('balance', amount);
@@ -59,6 +61,7 @@ export const withdrawFunds = async (userId: number, amount: number) => {
             const wallet = await trx('wallet')
                 .where('user_id', userId)
                 .first();
+                if(wallet == undefined) {throw {msg:'User not found'}}
             if (wallet.balance < amount) {
 
                 throw { msg: 'Insufficient balance' };
@@ -92,7 +95,7 @@ export const withdrawFunds = async (userId: number, amount: number) => {
     }
 };
 
-export const fundAccount = async (userId: number, amount: number) => {
+export const fundAccount = async (userId: number, amount: number) : Promise<any> =>{
     try {
         // Start a transaction to ensure data consistency
         return await Knex.transaction(async (trx) => {
@@ -135,4 +138,13 @@ export const createWallet = async (id: number) => {
         .insert({ balance: 0, user_id: id })
         .returning('*');
     return wallet as Iwallet;
+}
+
+export const getWallet = async (id: number) => {
+  return  await Knex('user')
+                .where('user.id', id)
+                .select('email', 'name', "wallet.*")
+                .leftJoin("wallet", "user.id", "wallet.user_id")
+                .first();
+        
 }
