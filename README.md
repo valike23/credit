@@ -39,6 +39,10 @@ This endpoint allows a user to transfer funds to another user's account. It requ
 
 POST /api/transactions/withdrawal
 This endpoint allows a user to withdraw funds from their account. It requires a user's token and the amount to be withdrawn.
+## Database Schema
+
+![Database Schema](https://res.cloudinary.com/tjconnect/image/upload/v1679378878/lendsqr_avsrwk.png)
+
 
 ## Token Authentication
 The Demo Credit MVP wallet service uses token-based authentication. The token is generated when a user creates an account and is required for all other endpoints. The token must be included in the request headers as follows: Authorization: Bearer <token>.
