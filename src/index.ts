@@ -1,9 +1,10 @@
 import express from 'express';
 import { apiRouter } from './routers/apiRouter';
 import { json } from 'body-parser';
+const {PORT}  = process.env;
 
 const app = express();
-const port = 5000;
+const port = PORT || 5000;
 
 //accept json body object for all routes
 app.use(json());
